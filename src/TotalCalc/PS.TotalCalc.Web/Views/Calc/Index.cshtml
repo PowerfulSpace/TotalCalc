@@ -1,0 +1,160 @@
+﻿@{
+    ViewData["Title"] = "Онлайн калькулятор";
+}
+
+<div class="calculator-container">
+    <div class="calculator">
+        <!-- Блок ввода -->
+        <div class="input-block">
+            <input type="text" id="calculator-input" class="calculator-input" readonly placeholder="0" />
+        </div>
+
+        <!-- Цифры и операторы -->
+        <div class="buttons-block">
+            <!-- Цифры -->
+            <div class="number-buttons">
+                @for (int i = 1; i <= 9; i++)
+                {
+                    <button class="btn number-btn" onclick="addToInput(@i)">@i</button>
+                }
+                <button class="btn number-btn" onclick="addToInput(0)">0</button>
+                <button class="btn number-btn" onclick="addToInput('.')">.</button>
+            </div>
+
+            <!-- Операторы -->
+            <div class="operator-buttons">
+                <button class="btn operator-btn" onclick="setOperator('+')">+</button>
+                <button class="btn operator-btn" onclick="setOperator('-')">−</button>
+                <button class="btn operator-btn" onclick="setOperator('*')">×</button>
+                <button class="btn operator-btn" onclick="setOperator('/')">÷</button>
+                <button class="btn operator-btn" onclick="calculate()">=</button>
+                <button class="btn operator-btn" onclick="clearInput()">C</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Подключение скрипта -->
+<script>
+    let currentInput = '';
+    let currentOperator = '';
+    let firstOperand = '';
+
+    function addToInput(value) {
+        currentInput += value;
+        document.getElementById('calculator-input').value = currentInput;
+    }
+
+    function setOperator(operator) {
+        if (currentInput) {
+            firstOperand = currentInput;
+            currentOperator = operator;
+            currentInput = '';
+            document.getElementById('calculator-input').value = '';
+        }
+    }
+
+    function calculate() {
+        if (firstOperand && currentOperator && currentInput) {
+            const result = eval(`${firstOperand} ${currentOperator} ${currentInput}`);
+            document.getElementById('calculator-input').value = result;
+            currentInput = result;
+            firstOperand = '';
+            currentOperator = '';
+        }
+    }
+
+    function clearInput() {
+        currentInput = '';
+        firstOperand = '';
+        currentOperator = '';
+        document.getElementById('calculator-input').value = '';
+    }
+</script>
+
+<!-- Стили -->
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f4f4f4;
+    }
+
+    .calculator-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        padding: 20px;
+    }
+
+    .calculator {
+        width: 300px;
+        text-align: center;
+    }
+
+    .input-block {
+        margin-bottom: 20px;
+    }
+
+    .calculator-input {
+        width: 100%;
+        padding: 10px;
+        font-size: 24px;
+        text-align: right;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+
+    .buttons-block {
+        display: flex;
+    }
+
+    .number-buttons {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        flex: 2;
+    }
+
+    .operator-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-left: 10px;
+        flex: 1;
+    }
+
+    .btn {
+        padding: 15px;
+        font-size: 18px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .number-btn {
+        background-color: #e0e0e0;
+    }
+
+    .number-btn:hover {
+        background-color: #d6d6d6;
+    }
+
+    .operator-btn {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    .operator-btn:hover {
+        background-color: #0056b3;
+    }
+</style>
