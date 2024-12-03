@@ -4,137 +4,59 @@
     ViewData["Title"] = "Онлайн калькулятор";
 }
 
-<div class="calculator-wrapper">
-    <div class="calculator-container">
-        <div class="calculator">
-            <form asp-action="Calculate" method="post">
-                <!-- Блок ввода -->
-                <div class="input-block">
-                    <div>
-                        <label asp-for="FirstNumber"></label>
-                        <input asp-for="FirstNumber" class="calculator-input" placeholder="Введите первое число" />
-                    </div>
-                    <div>
-                        <label asp-for="Operator"></label>
-                        <select asp-for="Operator" class="calculator-input">
-                            <option value="+">+</option>
-                            <option value="-">−</option>
-                            <option value="*">×</option>
-                            <option value="/">÷</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label asp-for="SecondNumber"></label>
-                        <input asp-for="SecondNumber" class="calculator-input" placeholder="Введите второе число" />
-                    </div>
-                </div>
+<style>
+    /* Применяем box-shadow к кнопке с классом .btn-muted */
+    .btn-muted {
+        box-shadow: 0 0 0 0.25rem rgba(255, 99, 71, 0.5); /* Оранжевый ореол */
+    }
 
-                <!-- Кнопки -->
-                <div class="buttons-block">
-                    <button type="submit" class="btn operator-btn">Вычислить</button>
-                    <button type="reset" class="btn operator-btn">Сброс</button>
-                </div>
+        /* Если нужно добавить эффекты при фокусе */
+        .btn-muted:focus {
+            box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.5); /* Синий ореол при фокусе */
+            outline: none;
+        }
+</style>
+
+<div class="container mt-5 col-7">
+    <h1 class="text-center mb-4">Calculator</h1>
+    <!-- Верхний блок ввода -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <form id="calculator-form">
+                <input type="text" class="form-control text-end fs-1" id="display" name="display" placeholder="0" readonly style="height: 60px;">
             </form>
+        </div>
+    </div>
 
-            <!-- Результат -->
-            @if (Model.Result != null)
-            {
-                <div class="result-block">
-                    <h3>Результат: @Model.Result</h3>
-                </div>
-            }
+    <!-- Основной блок калькулятора -->
+    <div class="row">
+        <!-- Цифры -->
+        <div class="col-9">
+            <div class="row g-0">
+                <!-- Цифры -->
+                <div class="col-4"><button type="button" class="btn btn-muted btn-outline-dark w-100 border border-dark border-1 rounded-1 fs-3">7</button></div>
+                <div class="col-4"><button type="button" class="btn btn-muted btn-outline-dark w-100 border border-dark border-1 rounded-1 fs-3">8</button></div>
+                <div class="col-4"><button type="button" class="btn btn-muted btn-outline-dark w-100 border border-dark border-1 rounded-1 fs-3">9</button></div>
+                <div class="col-4"><button type="button" class="btn btn-muted btn-outline-dark w-100 border border-dark border-1 rounded-1 fs-3">4</button></div>
+                <div class="col-4"><button type="button" class="btn btn-muted btn-outline-dark w-100 border border-dark border-1 rounded-1 fs-3">5</button></div>
+                <div class="col-4"><button type="button" class="btn btn-muted btn-outline-dark w-100 border border-dark border-1 rounded-1 fs-3">6</button></div>
+                <div class="col-4"><button type="button" class="btn btn-muted btn-outline-dark w-100 border border-dark border-1 rounded-1 fs-3">1</button></div>
+                <div class="col-4"><button type="button" class="btn btn-muted btn-outline-dark w-100 border border-dark border-1 rounded-1 fs-3">2</button></div>
+                <div class="col-4"><button type="button" class="btn btn-muted btn-outline-dark w-100 border border-dark border-1 rounded-1 fs-3">3</button></div>
+                <div class="col-4"><button type="button" class="btn btn-muted btn-outline-dark w-100 border border-dark border-1 rounded-1 fs-3">0</button></div>
+                <div class="col-4"><button type="button" class="btn btn-muted btn-outline-dark w-100 border border-dark border-1 rounded-1 fs-3">.</button></div>
+                <div class="col-4"><button type="button" class="btn btn-danger w-100 fs-3">=</button></div>
+            </div>
+        </div>
 
-            <!-- Ошибки -->
-            @if (!ViewData.ModelState.IsValid)
-            {
-                <div class="error-block">
-                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-                    {
-                        <p class="error-message">@error.ErrorMessage</p>
-                    }
-                </div>
-            }
+        <!-- Операторы -->
+        <div class="col-3">
+            <div class="row g-0">
+                <div class="col-12"><button type="button" class="btn btn-muted btn-outline-secondary w-100 border border-dark border-1 rounded-1 fs-3">+</button></div>
+                <div class="col-12"><button type="button" class="btn btn-muted btn-outline-secondary w-100 border border-dark border-1 rounded-1 fs-3">-</button></div>
+                <div class="col-12"><button type="button" class="btn btn-muted btn-outline-secondary w-100 border border-dark border-1 rounded-1 fs-3">×</button></div>
+                <div class="col-12"><button type="button" class="btn btn-muted btn-outline-secondary w-100 border border-dark border-1 rounded-1 fs-3">÷</button></div>
+            </div>
         </div>
     </div>
 </div>
-
-<!-- Стили -->
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        background-color: #f4f4f4;
-    }
-
-    .calculator-wrapper {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: calc(100vh - 140px); /* Высота шапки + отступ */
-        padding: 20px;
-    }
-
-    .calculator-container {
-        background-color: #fff;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        border-radius: 10px;
-        padding: 20px;
-        width: 100%;
-        max-width: 400px;
-    }
-
-    .calculator {
-        text-align: center;
-    }
-
-    .input-block {
-        margin-bottom: 20px;
-    }
-
-    .calculator-input {
-        width: 100%;
-        padding: 10px;
-        font-size: 18px;
-        margin: 5px 0;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        background-color: #f9f9f9;
-    }
-
-    .buttons-block {
-        display: flex;
-        justify-content: space-around;
-        margin-top: 20px;
-    }
-
-    .btn {
-        padding: 10px 20px;
-        font-size: 16px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: 0.3s;
-    }
-
-    .operator-btn {
-        background-color: #007bff;
-        color: #fff;
-    }
-
-        .operator-btn:hover {
-            background-color: #0056b3;
-        }
-
-    .result-block {
-        margin-top: 20px;
-    }
-
-    .error-block {
-        color: red;
-        margin-top: 20px;
-    }
-
-    .error-message {
-        font-size: 14px;
-    }
-</style>
