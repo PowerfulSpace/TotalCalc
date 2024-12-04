@@ -5,48 +5,56 @@ namespace PS.TotalCalc.Web.Controllers
 {
     public class CalculatorController : Controller
     {
+        private static CalculatorViewModel _model = new CalculatorViewModel();
+
         [HttpGet]
         public IActionResult Index()
         {
-            return View(new CalculatorViewModel());
+            return View();
         }
 
         [HttpPost]
-        public IActionResult Calculate(CalculatorViewModel model)
+        public IActionResult Index(string input)
         {
-            if (model.FirstNumber == null || model.SecondNumber == null || string.IsNullOrEmpty(model.Operator))
+            if ("0123456789.".Contains(input))
             {
-                ModelState.AddModelError("", "Введите все данные корректно.");
-                return View("Index", model);
+                if (_model.Operator == null)
+                    _model.FirstOperand += input;
+                else
+                    _model.SecondOperand += input;
+
+                _model.Display = (_model.Operator == null ? _model.FirstOperand : _model.SecondOperand);
+            }
+            else if ("+-×÷".Contains(input))
+            {
+                _model.Operator = input;
+            }
+            else if (input == "=")
+            {
+                double.TryParse(_model.FirstOperand, out double first);
+                double.TryParse(_model.SecondOperand, out double second);
+                _model.Result = _model.Operator switch
+                {
+                    "+" => (first + second).ToString(),
+                    "-" => (first - second).ToString(),
+                    "×" => (first * second).ToString(),
+                    "÷" => (second != 0 ? (first / second).ToString() : "Error"),
+                    _ => "Error"
+                };
+                _model.Display = _model.Result;
+                Reset();
+            }
+            else if (input == "C")
+            {
+                Reset();
             }
 
-            switch (model.Operator)
-            {
-                case "+":
-                    model.Result = model.FirstNumber + model.SecondNumber;
-                    break;
-                case "-":
-                    model.Result = model.FirstNumber - model.SecondNumber;
-                    break;
-                case "*":
-                    model.Result = model.FirstNumber * model.SecondNumber;
-                    break;
-                case "/":
-                    if (model.SecondNumber == 0)
-                    {
-                        ModelState.AddModelError("", "Деление на ноль невозможно.");
-                    }
-                    else
-                    {
-                        model.Result = model.FirstNumber / model.SecondNumber;
-                    }
-                    break;
-                default:
-                    ModelState.AddModelError("", "Неверный оператор.");
-                    break;
-            }
+            return Content(_model.Display);
+        }
 
-            return View("Index", model);
+        private void Reset()
+        {
+            _model = new CalculatorViewModel();
         }
     }
 }

@@ -56,7 +56,7 @@
             $(".btn").click(function () {
                 const input = $(this).text();
                 $.ajax({
-                    url: '/Calculator/Index',
+                    url: '/Calculator/ProcessInput',
                     type: 'POST',
                     data: { input: input },
                     success: function (response) {
